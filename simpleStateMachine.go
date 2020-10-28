@@ -2,83 +2,42 @@ package main
 
 import "fmt"
 
-// MachineTransition transition map
-type MachineTransition struct {
-	To string // to next state
+func onOper() bool {
+	fmt.Println("gonna turn off")
+	return true
 }
 
-// TransitionMap map with transitions: key=>event, value=>MachineTransition
-type TransitionMap map[string]MachineTransition
-
-// MachineState is State of machine
-type MachineState struct {
-	On TransitionMap // means on the event, do MachineTransition
+func offOper() bool {
+	fmt.Println("gonna turn on")
+	return true
 }
 
-// StateMap maps state, key=>state name, MachineState=>MachineState
-type StateMap map[string]MachineState
-
-// Machine datatype
-type Machine struct {
-	id           string
-	InitialState string
-	currentState string
-	States       StateMap
-}
-
-// IMachine machine interface
-type IMachine interface {
-	Transition() string
-	Current() string
-	GetID() string
-}
-
-// Current returns current state
-func (m *Machine) Current() string {
-	if m.currentState == "" {
-		return m.InitialState
-	}
-	return m.currentState
-}
-
-// Transition transitions to next state
-func (m *Machine) Transition(event string) string {
-	current := m.Current()
-	transitions := m.States[current].On
-	next := transitions[event].To
-	if next != "" {
-		m.currentState = next
-		return next
-	}
-	return current
-}
-
-func (m *Machine) GetID() string {
-	return m.id
-}
-
-func run() {
+func runSimpleStateMachine() {
 	machine := &Machine{
-		id:           "M-1",
+		id:           "M-simple-light",
 		InitialState: "on",
 		States: StateMap{
 			"on": MachineState{
 				On: TransitionMap{
 					"TOGGLE": MachineTransition{
-						To: "off",
+						To:        "off",
+						Operation: onOper,
 					},
 					"DOUBLE_TOGGLE": MachineTransition{
-						To: "on",
+						To:        "on",
+						Operation: offOper,
 					},
 				},
 			},
 			"off": MachineState{
 				On: TransitionMap{
 					"TOGGLE": MachineTransition{
-						To: "on",
+						To:        "on",
+						Operation: offOper,
 					},
 					"DOUBLE_TOGGLE": MachineTransition{
-						To: "off",
+						To:        "off",
+						Operation: onOper,
 					},
 				},
 			},
@@ -98,4 +57,3 @@ func run() {
 	output = machine.Transition("DOUBLE_TOGGLE")
 	fmt.Println(output)
 }
-

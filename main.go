@@ -1,5 +1,7 @@
 package main
 
-func main()  {
-	run()
+func main() {
+	//runSimpleStateMachine()
+	//runColorfulLight()
+	runWithdrawal()
 }
